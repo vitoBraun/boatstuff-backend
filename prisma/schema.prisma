@@ -11,11 +11,19 @@ datasource db {
 }
 
 model Product {
-  id               Int     @id @default(autoincrement())
+  id               Int        @id @default(autoincrement())
   title            String
   shortDescription String
   description      String
   price            Int
-  isNew            Boolean @default(false)
-  isAvailable      Boolean @default(true)
+  isNew            Boolean    @default(false)
+  isAvailable      Boolean    @default(true)
+  categories       Category[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  products    Product[]
 }

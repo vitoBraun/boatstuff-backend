@@ -1,4 +1,16 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ValidateNested,
+  IsBoolean,
+  IsNumber,
+  IsString,
+  ArrayNotEmpty,
+} from 'class-validator';
+
+class Category {
+  @IsNumber()
+  id: number;
+}
 
 export class CreateProductDto {
   @IsString()
@@ -17,4 +29,8 @@ export class CreateProductDto {
   isNew: boolean;
   @IsBoolean()
   isAvailable: boolean;
+
+  @ValidateNested({ each: true })
+  @Type(() => Category)
+  categories: Category[];
 }

@@ -1,6 +1,16 @@
 import { Product } from '@prisma/client';
 import { ProductService } from './product.service';
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  // HttpException,
+  // HttpStatus,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create.product.dto';
 
 @Controller('product')
@@ -22,6 +32,13 @@ export class ProductController {
     @Body()
     productData: CreateProductDto,
   ): Promise<Product> {
-    return this.productService.createProduct(productData);
+    return await this.productService.createProduct(productData).catch(() => {
+      throw new HttpException(
+        {
+          message: 'Bad request, probably not existed category',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    });
   }
 }
