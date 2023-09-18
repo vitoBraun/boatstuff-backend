@@ -15,7 +15,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 const mb = 50;
 const bytes = mb * 1024 * 1024;
 const rootDir = process.cwd();
-const uploadPath = path.resolve(rootDir, 'uploads');
+const uploadPath = path.resolve(rootDir, process.env.UPLOAD_LOCATION);
 
 export const multerOptions = {
   limits: {
