@@ -56,6 +56,6 @@ export class FileController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(@UploadedFile() file) {
-    return { url: `/uploads/${file.originalname}` };
+    return { url: `/uploads/${file.filename}` };
   }
 }
