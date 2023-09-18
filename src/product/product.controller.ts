@@ -8,8 +8,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  // HttpException,
-  // HttpStatus,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create.product.dto';
 

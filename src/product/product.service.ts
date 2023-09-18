@@ -8,15 +8,7 @@ export class ProductService {
   constructor(private prisma: PrismaService) {}
   async createProduct(product: CreateProductDto): Promise<Product> {
     return this.prisma.product.create({
-      data: {
-        ...product,
-        categories: {
-          connect: product.categories,
-        },
-      },
-      include: {
-        categories: true,
-      },
+      data: { ...product, categories: { connect: product.categories } },
     });
   }
 

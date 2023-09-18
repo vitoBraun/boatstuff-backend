@@ -21,7 +21,7 @@ export class CategoryController {
     @Body()
     productData: CreateCategoryDto,
   ): Promise<Category> {
-    return this.categoryService.createCategory(productData);
+    return this.categoryService.createCategory(productData as Category);
   }
 
   @Get('list')
