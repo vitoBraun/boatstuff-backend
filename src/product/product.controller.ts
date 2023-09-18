@@ -8,7 +8,9 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create.product.dto';
 
@@ -17,8 +19,10 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('list')
-  async getProducts(): Promise<Product[]> {
-    return this.productService.getProductList();
+  async getProducts(
+    @Query('categoryId') categoryId: string,
+  ): Promise<Product[]> {
+    return this.productService.getProductList(categoryId && Number(categoryId));
   }
 
   @Get(':id')
@@ -53,5 +57,20 @@ export class ProductController {
           HttpStatus.BAD_REQUEST,
         );
       });
+  }
+
+  @Patch()
+  async editProduct(
+    @Body()
+    productData: CreateProductDto & { id: number },
+  ) {
+    return await this.productService.editProduct(productData).catch((error) => {
+      throw new HttpException(
+        {
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    });
   }
 }

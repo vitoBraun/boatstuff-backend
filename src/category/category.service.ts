@@ -8,11 +8,14 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
-    if (!categoryData.level) {
-      categoryData.level = 1;
-    }
+    // if (!categoryData.level) {
+    //   categoryData.level = 1;
+    // }
     if (categoryData.predecessors?.length > 0) {
-      categoryData.level = categoryData.level + 1;
+      const predecessor = await this.prisma.category.findUnique({
+        where: { id: categoryData.predecessors[0].id },
+      });
+      categoryData.level = predecessor.level + 1;
     }
     const createdCategory = await this.prisma.category.create({
       data: {
@@ -44,6 +47,7 @@ export class CategoryService {
     return this.prisma.category.findMany({
       where: { level },
       include: {
+        successors: true,
         predecessors: true,
       },
     });
