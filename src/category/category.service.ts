@@ -8,9 +8,6 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
-    // if (!categoryData.level) {
-    //   categoryData.level = 1;
-    // }
     if (categoryData.predecessors?.length > 0) {
       const predecessor = await this.prisma.category.findUnique({
         where: { id: categoryData.predecessors[0].id },
