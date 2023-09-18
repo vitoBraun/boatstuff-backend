@@ -21,7 +21,16 @@ export class CategoryController {
     @Body()
     productData: CreateCategoryDto,
   ): Promise<Category> {
-    return this.categoryService.createCategory(productData as Category);
+    return await this.categoryService
+      .createCategory(productData)
+      .catch((error) => {
+        throw new HttpException(
+          {
+            message: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      });
   }
 
   @Get('list')

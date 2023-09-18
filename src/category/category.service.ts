@@ -8,7 +8,7 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(categoryCata: CreateCategoryDto): Promise<Category> {
-    return this.prisma.category.create({
+    const createdCategory = await this.prisma.category.create({
       data: {
         ...categoryCata,
         predecessors: {
@@ -17,6 +17,17 @@ export class CategoryService {
       },
       include: { predecessors: true },
     });
+    const errors = [];
+    categoryCata.predecessors?.forEach((predecessor) => {
+      if (predecessor.id === createdCategory.id) {
+        this.prisma.category.delete({ where: { id: predecessor.id } });
+        errors.push(predecessor.id);
+      }
+    });
+    if (errors.length > 0) {
+      throw new Error(`Predecessor ${errors} cannot be same as category id`);
+    }
+    return createdCategory;
   }
 
   async getCategoriesList(): Promise<Category[]> {
