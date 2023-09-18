@@ -25,9 +25,10 @@ model Category {
   id           Int        @id @default(autoincrement())
   title        String
   description  String?
-  Product      Product[]
+  products     Product[]
   predecessors Category[] @relation("CategoriesToCategories")
   successors   Category[] @relation("CategoriesToCategories")
+  level        Int        @default(1)
 }
 
 model User {

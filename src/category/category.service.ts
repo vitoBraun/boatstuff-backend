@@ -7,32 +7,45 @@ import { CreateCategoryDto } from './dto/create.category.dto';
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async createCategory(categoryCata: CreateCategoryDto): Promise<Category> {
+  async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
+    if (!categoryData.level) {
+      categoryData.level = 1;
+    }
+    if (categoryData.predecessors?.length > 0) {
+      categoryData.level = categoryData.level + 1;
+    }
     const createdCategory = await this.prisma.category.create({
       data: {
-        ...categoryCata,
+        ...categoryData,
         predecessors: {
-          connect: categoryCata.predecessors,
+          connect: categoryData.predecessors,
         },
       },
       include: { predecessors: true },
     });
     const errors = [];
-    categoryCata.predecessors?.forEach((predecessor) => {
+    categoryData.predecessors?.forEach(async (predecessor) => {
       if (predecessor.id === createdCategory.id) {
-        this.prisma.category.delete({ where: { id: predecessor.id } });
         errors.push(predecessor.id);
       }
     });
     if (errors.length > 0) {
-      throw new Error(`Predecessor ${errors} cannot be same as category id`);
+      await this.prisma.category.delete({ where: { id: createdCategory.id } });
+      throw new Error(
+        `Predecessor ${errors.map(
+          (error) => `${error}, `,
+        )} cannot be same as category id`,
+      );
     }
     return createdCategory;
   }
 
-  async getCategoriesList(): Promise<Category[]> {
+  async getCategoriesList(level: number = 1): Promise<Category[]> {
     return this.prisma.category.findMany({
-      include: { predecessors: true, successors: true },
+      where: { level },
+      include: {
+        predecessors: true,
+      },
     });
   }
 

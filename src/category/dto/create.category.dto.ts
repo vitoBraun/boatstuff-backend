@@ -13,6 +13,8 @@ export class CreateCategoryDto {
   @IsString()
   description: string;
 
+  level?: number;
+
   // successors?: Prisma.CategorySubcategoryCreateNestedManyWithoutPredecessorInput;
   predecessors?: ICategory[];
 }

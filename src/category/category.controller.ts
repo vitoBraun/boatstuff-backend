@@ -33,9 +33,12 @@ export class CategoryController {
       });
   }
 
-  @Get('list')
-  async getList(): Promise<Category[]> {
-    return this.categoryService.getCategoriesList();
+  @Get('list/:level?')
+  async getList(@Param('level') level: string): Promise<Category[]> {
+    if (!level) {
+      return this.categoryService.getCategoriesList();
+    }
+    return this.categoryService.getCategoriesList(Number(level));
   }
 
   @Delete(':id')
