@@ -27,4 +27,6 @@ export class CreateProductDto {
   @ValidateNested({ each: true })
   @Type(() => ICategory)
   categories?: ICategory[];
+
+  images?: string[];
 }
