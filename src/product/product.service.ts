@@ -7,10 +7,13 @@ import { CreateProductDto } from './dto/create.product.dto';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
   async createProduct(product: CreateProductDto) {
-    const exist = await this.checkForCategoriesExist(product.categories);
-    if (!exist) {
-      throw new Error('Category not found');
+    if (product.categories?.length) {
+      const exist = await this.checkForCategoriesExist(product.categories);
+      if (!exist) {
+        throw new Error('Category not found');
+      }
     }
+
     return await this.prisma.product.create({
       data: { ...product, categories: { connect: product.categories } },
       include: { categories: true },
