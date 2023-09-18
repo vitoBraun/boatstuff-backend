@@ -3,6 +3,7 @@ import { ProductService } from './product.service';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -25,18 +26,34 @@ export class ProductController {
     return 'Product ' + id;
   }
 
+  @Delete(':id')
+  async deleteProductById(@Param('id') id: string) {
+    return await this.productService
+      .deleteProduct(Number(id))
+      .catch((error) => {
+        throw new HttpException(
+          {
+            message: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      });
+  }
+
   @Post()
   async createProduct(
     @Body()
     productData: CreateProductDto,
-  ): Promise<Product> {
-    return await this.productService.createProduct(productData).catch(() => {
-      throw new HttpException(
-        {
-          message: 'Bad request, probably not existed category',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    });
+  ) {
+    return await this.productService
+      .createProduct(productData)
+      .catch((error) => {
+        throw new HttpException(
+          {
+            message: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      });
   }
 }

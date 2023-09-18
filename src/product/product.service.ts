@@ -6,10 +6,15 @@ import { CreateProductDto } from './dto/create.product.dto';
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
-  async createProduct(product: CreateProductDto): Promise<Product> {
-    return this.prisma.product.create({
-      data: { ...product, categories: { connect: product.categories } },
-    });
+  async createProduct(product: CreateProductDto) {
+    try {
+      return await this.prisma.product.create({
+        data: { ...product, categories: { connect: product.categories } },
+        include: { categories: true },
+      });
+    } catch (error) {
+      return new Error('Could not create product');
+    }
   }
 
   async getProductList(): Promise<Product[]> {
@@ -22,8 +27,11 @@ export class ProductService {
         where: { id: category.id },
       });
       if (!existingCategory) {
-        throw new Error('Category not found');
+        return new Error('Category not found');
       }
     });
+  }
+  async deleteProduct(id: number): Promise<Product> {
+    return this.prisma.product.delete({ where: { id } });
   }
 }
