@@ -1,10 +1,4 @@
-// import { Prisma } from '@prisma/client';
-
-import { IsString } from 'class-validator';
-
-class ICategory {
-  id: number;
-}
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
@@ -12,9 +6,15 @@ export class CreateCategoryDto {
 
   @IsString()
   description: string;
+}
 
-  level?: number;
+export class CreateSubcategoryDto {
+  @IsString()
+  title: string;
 
-  // successors?: Prisma.CategorySubcategoryCreateNestedManyWithoutPredecessorInput;
-  predecessors?: ICategory[];
+  @IsString()
+  description: string;
+
+  @IsNumber()
+  categoryId: number;
 }

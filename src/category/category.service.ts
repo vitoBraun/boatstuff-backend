@@ -1,56 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { Category, Subcategory } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateCategoryDto } from './dto/create.category.dto';
+import {
+  CreateCategoryDto,
+  CreateSubcategoryDto,
+} from './dto/create.category.dto';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
-    if (categoryData.predecessors?.length > 0) {
-      const predecessor = await this.prisma.category.findUnique({
-        where: { id: categoryData.predecessors[0].id },
-      });
-      categoryData.level = predecessor.level + 1;
-    }
-    const createdCategory = await this.prisma.category.create({
-      data: {
-        ...categoryData,
-        predecessors: {
-          connect: categoryData.predecessors,
-        },
-      },
-      include: { predecessors: true },
+    return await this.prisma.category.create({
+      data: categoryData,
+      include: { subcategories: true },
     });
-    const errors = [];
-    categoryData.predecessors?.forEach(async (predecessor) => {
-      if (predecessor.id === createdCategory.id) {
-        errors.push(predecessor.id);
-      }
-    });
-    if (errors.length > 0) {
-      await this.prisma.category.delete({ where: { id: createdCategory.id } });
-      throw new Error(
-        `Predecessor ${errors.map(
-          (error) => `${error}, `,
-        )} cannot be same as category id`,
-      );
-    }
-    return createdCategory;
   }
 
-  async getCategoriesList(level: number = 1): Promise<Category[]> {
+  async createSubcategory(
+    subcategoryData: CreateSubcategoryDto,
+  ): Promise<Subcategory> {
+    return await this.prisma.subcategory.create({
+      data: subcategoryData,
+    });
+  }
+
+  async getCategoriesList(): Promise<Category[]> {
     return this.prisma.category.findMany({
-      where: { level },
       include: {
-        successors: true,
-        predecessors: true,
+        subcategories: true,
+      },
+    });
+  }
+
+  async getSubcategoriesList(categoryId?: number): Promise<Subcategory[]> {
+    return this.prisma.subcategory.findMany({
+      where: { categoryId: categoryId ? categoryId : undefined },
+      include: {
+        category: true,
       },
     });
   }
 
   async deleteCategory(id: number) {
-    return this.prisma.category.delete({ where: { id } });
+    return this.prisma.category.delete({
+      where: { id },
+      include: {
+        subcategories: true,
+      },
+    });
+  }
+
+  async deleteSubcategory(id: number) {
+    return this.prisma.subcategory.delete({ where: { id } });
   }
 }

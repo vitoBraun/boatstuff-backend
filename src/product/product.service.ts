@@ -6,62 +6,69 @@ import { CreateProductDto } from './dto/create.product.dto';
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
+  async getProductById(id: number): Promise<Product> {
+    const existingProduct = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    if (!existingProduct) {
+      throw new Error('Product not found');
+    }
+    return existingProduct;
+  }
   async createProduct(product: CreateProductDto) {
-    if (product.categories?.length) {
-      const exist = await this.checkForCategoriesExist(product.categories);
+    if (product.subcategoryId) {
+      const exist = await this.checkForSubcategoryExist(
+        Number(product.subcategoryId),
+      );
       if (!exist) {
-        throw new Error('Category not found');
+        throw new Error('Subcategory not found');
       }
     }
 
     return await this.prisma.product.create({
-      data: { ...product, categories: { connect: product.categories } },
-      include: { categories: true },
+      data: product,
     });
   }
 
   async editProduct(product: CreateProductDto & { id: number }) {
-    if (product.categories) {
-      const existingCategory = await this.checkForCategoriesExist(
-        product.categories,
+    if (product.subcategoryId) {
+      const existingSubcategory = await this.checkForSubcategoryExist(
+        product.subcategoryId,
       );
-      if (!existingCategory) {
-        throw new Error('Category not found');
+      if (!existingSubcategory) {
+        throw new Error('Subcategory not found');
       }
     }
 
     return (
       this.prisma.product.update({
         where: { id: product.id },
-        data: { ...product, categories: { set: product.categories } },
-        include: { categories: true },
+        data: product,
       }) ?? new Error('Product not found')
     );
   }
 
-  async getProductList(categoryId?: number): Promise<Product[]> {
+  async getProductList({
+    subcategoryId,
+    categoryId,
+  }: {
+    subcategoryId?: number;
+    categoryId?: number;
+  }): Promise<Product[]> {
     return this.prisma.product.findMany({
       where: {
-        categories: {
-          some: {
-            id: {
-              equals: categoryId,
-            },
-          },
-        },
+        subcategoryId,
+        categoryId,
       },
-      include: { categories: true },
     });
   }
 
-  async checkForCategoriesExist(categories: Array<{ id: number }>) {
-    for (const category of categories) {
-      const existingCategory = await this.prisma.category.findUnique({
-        where: { id: category.id },
-      });
-      if (!existingCategory) {
-        return false;
-      }
+  async checkForSubcategoryExist(subcategoryId: number) {
+    const existingSubcategory = await this.prisma.subcategory.findUnique({
+      where: { id: subcategoryId },
+    });
+    if (!existingSubcategory) {
+      return false;
     }
     return true;
   }

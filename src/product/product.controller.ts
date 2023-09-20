@@ -21,13 +21,24 @@ export class ProductController {
   @Get('list')
   async getProducts(
     @Query('categoryId') categoryId: string,
+    @Query('subcategoryId') subcategoryId: string,
   ): Promise<Product[]> {
-    return this.productService.getProductList(categoryId && Number(categoryId));
+    return this.productService.getProductList({
+      categoryId: categoryId && Number(categoryId),
+      subcategoryId: subcategoryId && Number(subcategoryId),
+    });
   }
 
   @Get(':id')
   getProductById(@Param('id') id: string) {
-    return 'Product ' + id;
+    return this.productService.getProductById(Number(id)).catch(() => {
+      throw new HttpException(
+        {
+          message: 'Bad request, probably not existed product',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    });
   }
 
   @Delete(':id')
@@ -42,7 +53,7 @@ export class ProductController {
     });
   }
 
-  @Post()
+  @Post('create')
   async createProduct(
     @Body()
     productData: CreateProductDto,

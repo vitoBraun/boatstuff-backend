@@ -4,7 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  app.useGlobalPipes;
+  new ValidationPipe({
+    transform: true,
+    transformOptions: { enableImplicitConversion: true },
+  }),
+    app.enableCors();
+  await app.listen(process.env.PORT || 1333);
 }
 bootstrap();
