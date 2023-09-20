@@ -11,17 +11,26 @@ datasource db {
 }
 
 model Product {
-  id               Int          @id @default(autoincrement())
+  id               Int            @id @default(autoincrement())
   title            String
   shortDescription String
   description      String
   price            Int
-  isNew            Boolean      @default(false)
-  isAvailable      Boolean      @default(true)
-  Subcategory      Subcategory? @relation(fields: [subcategoryId], references: [id])
+  isNew            Boolean        @default(false)
+  isAvailable      Boolean        @default(true)
+  Subcategory      Subcategory?   @relation(fields: [subcategoryId], references: [id])
   subcategoryId    Int?
-  Category         Category?    @relation(fields: [categoryId], references: [id])
+  Category         Category?      @relation(fields: [categoryId], references: [id])
   categoryId       Int?
+  images           String?
+  ProductImage     ProductImage[]
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  url       String
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Category {
