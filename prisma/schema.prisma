@@ -11,16 +11,16 @@ datasource db {
 }
 
 model Product {
-  id               Int            @id @default(autoincrement())
+  id               Int          @id @default(autoincrement())
   title            String
   shortDescription String
   description      String
   price            Int
-  isNew            Boolean        @default(false)
-  isAvailable      Boolean        @default(true)
-  Subcategory      Subcategory?   @relation(fields: [subcategoryId], references: [id])
+  isNew            Boolean      @default(false)
+  isAvailable      Boolean      @default(true)
+  Subcategory      Subcategory? @relation(fields: [subcategoryId], references: [id])
   subcategoryId    Int?
-  Category         Category?      @relation(fields: [categoryId], references: [id])
+  Category         Category?    @relation(fields: [categoryId], references: [id])
   categoryId       Int?
   images           String?
 }
@@ -44,7 +44,7 @@ model Subcategory {
 
 model User {
   id           Int     @id @default(autoincrement())
-  email        String
+  email        String  @unique
   name         String?
   passwordHash String
 }

@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create.product.dto';
-import { AuthMiddleware } from 'src/users/auth.middleware';
+import { AuthGuard } from 'src/users/auth.middleware';
 
 @Controller('product')
 export class ProductController {
@@ -56,7 +56,7 @@ export class ProductController {
   }
 
   @Post('create')
-  @UseGuards(AuthMiddleware)
+  @UseGuards(AuthGuard)
   async createProduct(
     @Body()
     productData: CreateProductDto,
