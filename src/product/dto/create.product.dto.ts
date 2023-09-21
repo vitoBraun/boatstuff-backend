@@ -22,5 +22,6 @@ export class CreateProductDto {
   @IsNumber()
   subcategoryId?: number;
 
+  @IsString()
   images?: string;
 }

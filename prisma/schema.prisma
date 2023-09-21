@@ -23,14 +23,6 @@ model Product {
   Category         Category?      @relation(fields: [categoryId], references: [id])
   categoryId       Int?
   images           String?
-  ProductImage     ProductImage[]
-}
-
-model ProductImage {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  url       String
-  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -51,6 +43,8 @@ model Subcategory {
 }
 
 model User {
-  id   Int    @id @default(autoincrement())
-  name String
+  id           Int     @id @default(autoincrement())
+  email        String
+  name         String?
+  passwordHash String
 }
