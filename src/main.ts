@@ -5,9 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
-  app.setGlobalPrefix('api', {
-    exclude: ['uploads'],
-  });
+  app.setGlobalPrefix('api');
   app.enableCors();
   app.useGlobalPipes();
 
