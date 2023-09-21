@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -11,6 +12,7 @@ import { existsSync } from 'fs';
 import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { AuthGuard } from 'src/users/auth.middleware';
 
 const mb = 50;
 const bytes = mb * 1024 * 1024;
@@ -54,6 +56,7 @@ export const multerOptions = {
 @Controller('file')
 export class FileController {
   @Post('/upload')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(@UploadedFile() file) {
     return { url: `/uploads/${file.filename}` };

@@ -44,6 +44,7 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async deleteProductById(@Param('id') id: string) {
     return await this.productService.deleteProduct(Number(id)).catch(() => {
       throw new HttpException(
@@ -74,6 +75,7 @@ export class ProductController {
   }
 
   @Patch()
+  @UseGuards(AuthGuard)
   async editProduct(
     @Body()
     productData: CreateProductDto & { id: number },

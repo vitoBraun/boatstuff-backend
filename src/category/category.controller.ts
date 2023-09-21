@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Category, Subcategory } from '@prisma/client';
@@ -15,12 +16,14 @@ import {
   CreateCategoryDto,
   CreateSubcategoryDto,
 } from './dto/create.category.dto';
+import { AuthGuard } from 'src/users/auth.middleware';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(
     @Body()
     productData: CreateCategoryDto,
@@ -38,6 +41,7 @@ export class CategoryController {
   }
 
   @Post('subcategory')
+  @UseGuards(AuthGuard)
   async createSubcategory(
     @Body()
     subcategoryData: CreateSubcategoryDto,
@@ -67,6 +71,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(@Param('id') id: string) {
     return await this.categoryService.deleteCategory(Number(id)).catch(() => {
       throw new HttpException(
@@ -78,6 +83,7 @@ export class CategoryController {
     });
   }
   @Delete('subcategory/:id')
+  @UseGuards(AuthGuard)
   async deleteSubcategory(@Param('id') id: string) {
     return await this.categoryService
       .deleteSubcategory(Number(id))
