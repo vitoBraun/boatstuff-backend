@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -21,6 +23,10 @@ import { APP_GUARD } from '@nestjs/core';
         limit: 200,
       },
     ]),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      serveRoot: '/admin',
+    }),
   ],
   controllers: [AppController, CategoryController, FileController],
   providers: [
