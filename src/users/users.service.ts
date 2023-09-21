@@ -15,8 +15,16 @@ export class UsersService {
     return this.prismaServise.user.findUnique({ where: { email } });
   }
 
+  async getUsersList(): Promise<User[]> {
+    return this.prismaServise.user.findMany();
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     return this.prismaServise.user.findFirst({ where: { email } });
+  }
+
+  async deleteUserByEmail(email: string): Promise<User> {
+    return this.prismaServise.user.delete({ where: { email } });
   }
 
   async validateUser({
