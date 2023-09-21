@@ -36,4 +36,19 @@ export class UsersService {
     }
     return true;
   }
+
+  async invalidateToken(token: string): Promise<{ id: number; token: string }> {
+    return await this.prismaServise.invalidToken.create({ data: { token } });
+  }
+
+  async validateToken(token: string): Promise<boolean> {
+    const invalidToken = await this.prismaServise.invalidToken.findUnique({
+      where: { token },
+    });
+
+    if (invalidToken !== null) {
+      return false;
+    }
+    return true;
+  }
 }

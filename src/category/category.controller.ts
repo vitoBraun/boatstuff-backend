@@ -16,7 +16,7 @@ import {
   CreateCategoryDto,
   CreateSubcategoryDto,
 } from './dto/create.category.dto';
-import { AuthGuard } from 'src/users/auth.middleware';
+import { AuthGuard } from 'src/users/auth.guard';
 
 @Controller('category')
 export class CategoryController {

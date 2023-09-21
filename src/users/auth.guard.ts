@@ -16,6 +16,13 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const token = req.headers.authorization?.split(' ')[1];
+
+    const isTokenValid = await this.userService.validateToken(token);
+
+    if (!isTokenValid) {
+      throw new HttpException('Token is expired', HttpStatus.UNAUTHORIZED);
+    }
+
     let email;
     if (token) {
       await jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {

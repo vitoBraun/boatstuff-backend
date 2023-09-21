@@ -12,7 +12,7 @@ import { existsSync } from 'fs';
 import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { AuthGuard } from 'src/users/auth.middleware';
+import { AuthGuard } from 'src/users/auth.guard';
 
 const mb = 50;
 const bytes = mb * 1024 * 1024;
